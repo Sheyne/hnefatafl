@@ -15,6 +15,10 @@ initUI = function () {
         boardElement.append(boardRow);
     }
 
+    turnText = $('<div class="turn"></div>');
+    $('body').append(turnText);
+    gameOverText = $('<div class="gameOver"></div>');
+    $('body').append(gameOverText);
     $('body').append(boardElement);
 }
 
@@ -38,6 +42,26 @@ function updateUI() {
             cell.addClass("special").addClass("move");
         }
     });
+
+    if(exports.gameState.turn == -1) {
+	var winner;
+	switch(exports.gameState.winner) {
+		case -1:
+			winner = "Tie";
+			break;
+		case 0:
+			winner = "Red";
+			break;
+		case 1:
+			winner = "Green";
+			break;
+	}
+	gameOverText.text(winner+" Wins!");
+        turnText.text("Game Over");
+    } else {
+	gameOverText.text("");
+	turnText.text((exports.gameState.turn == 0 ? "Red" : "Green")+"'s Turn");
+    }
 
     //also highlight its possible moves
     //highlight enemy pieces that are flanked on one side
