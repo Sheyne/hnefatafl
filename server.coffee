@@ -4,7 +4,7 @@ logic = require './logic'
 
 index = fs.readFileSync 'index.html'
 frontend = fs.readFileSync 'frontend.js'
-logicFile = fs.readFileSync 'logic.js'
+stylesheet = fs.readFileSync 'style.css'
 
 doCommand = (command, opts) ->
 	res = opts.response
@@ -33,6 +33,9 @@ http.createServer((req, res) ->
 		else if part1 == 'logic.js'
 			res.writeHead(200, {'Content-Type': 'text/plain'})
 			res.end logicFile
+		else if part1 == 'style.css'
+			res.writeHead(200, {'Content-Type': 'text/plain'})
+			res.end stylesheet
 		else if parts[0]
 			doCommand parts[0], {'request': req, 'user': part1, 'response': res, 'data': parts[1..]}
 		else
