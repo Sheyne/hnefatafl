@@ -17,7 +17,7 @@ outputState = (res, player) ->
 		logic.gameState['yourTurn'] = logic.gameState.turn == player
 		res.end JSON.stringify logic.gameState
 	else
-		res.writeHead(500, {'Content-Type': 'text/plain'})
+		res.writeHead(200, {'Content-Type': 'text/plain'})
 		res.end 'no game in progress'
 
 
@@ -69,12 +69,12 @@ http.createServer((req, res) ->
 				res.end JSON.stringify key
 				keyCounter += 1
 			else
-				res.writeHead(500, {'Content-Type': 'text/plain'})
+				res.writeHead(200, {'Content-Type': 'text/plain'})
 				res.end JSON.stringify {'error': 'the game is full'}
 
 		else if part1 == 'api' and parts[0] and parts[1]
 			doCommand parts[1], {'request': req, 'token': parts[0], 'response': res, 'data': parts[2..]}
 		else
-			res.writeHead(400, {'Content-Type': 'text/plain'})
+			res.writeHead(404, {'Content-Type': 'text/plain'})
 			res.end 'invalid request'
 ).listen(9615)
