@@ -36,6 +36,10 @@ exports.reset = function () {
             "x": -1,
             "y": -1
         },
+	"previousPiece": {
+	    "x": -1,
+	    "y": -1
+	},
 	"winner": -1
     };
 };
@@ -163,10 +167,12 @@ exports.makeMove = function (player, selectedX, selectedY, x, y) {
         var temp = exports.gameState.board[y][x];
         exports.gameState.board[y][x] = exports.gameState.board[selectedY][selectedX];
         exports.gameState.board[selectedY][selectedX] = temp;
-        exports.gameState.selectedPiece = {
+       	exports.gameState.previousPiece = exports.gameState.selectedPiece;
+	exports.gameState.selectedPiece = {
             "x": -1,
             "y": -1
         };
+
 
 	if(exports.gameState.board[y][x] == PK) {
 		if(x == 0 || x == BoardSize-1) {
@@ -196,13 +202,16 @@ exports.makeMove = function (player, selectedX, selectedY, x, y) {
                             }
                         } else if (capturedPiece == PK) {
                             //need 4 flanks
-			    
+			    console.log("capped piece is a king");
 			    var canEscape = false;
 			    for(var v = -1; v < 2; v+= 1) {
 				for(var w = -1; w < 2; w += 1) {
-				    
+				    if((v !== 0 && w !== 0) || (v === 0 && w === 0)) {
+					continue;
+				    }
 				    //var possibleEscape = exports.gameState.board[y + j + w][x + i + v];
 				    if(isEmpty(x + i + v, y + j + w) && !isKingOnly(x + i + v, y + j + w)) {
+					console.log("found an escape route at", x+i+v, ",", y+j+w);
 					canEscape = true;
 				    }
 				}
@@ -210,6 +219,7 @@ exports.makeMove = function (player, selectedX, selectedY, x, y) {
 			    if(!canEscape) {
 				exports.gameState.turn = exports.TeamNone;
 				exports.gameState.winner = exports.TeamRed;
+				return true;
 			    }
                         }
                     }

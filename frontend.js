@@ -19,6 +19,8 @@ initUI = function () {
     $('body').append(turnText);
     gameOverText = $('<div class="gameOver"></div>');
     $('body').append(gameOverText);
+    resetButton = $('<input type="button" value="Reset" />');
+    $('body').append(resetButton);
     $('body').append(boardElement);
 }
 
@@ -41,6 +43,9 @@ function updateUI() {
         } else if (isLegalMove(exports.gameState, x, y)) {
             cell.addClass("special").addClass("move");
         }
+	if(exports.gameState.previousPiece.x == x && exports.gameState.previousPiece.y == y) {
+	    cell.addClass("previous").addClass("special");
+	}
     });
 
     if(exports.gameState.turn == -1) {
@@ -58,9 +63,11 @@ function updateUI() {
 	}
 	gameOverText.text(winner+" Wins!");
         turnText.text("Game Over");
+	resetButton.show();
     } else {
 	gameOverText.text("");
 	turnText.text((exports.gameState.turn == exports.TeamRed ? "Red" : "Green")+"'s Turn");
+	resetButton.hide();
     }
 
     //also highlight its possible moves
@@ -129,5 +136,10 @@ $(document).ready(function(){
 		});
 	    }
 	    updateUI();
+	});
+	resetButton.on('click', function() {
+		$.getJSON("api/wow/reset", function(data) {
+			queryServer();
+		});
 	});
 });
