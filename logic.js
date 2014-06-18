@@ -23,15 +23,13 @@ var PieceTeams = [exports.TeamNone, exports.TeamRed, exports.TeamGreen, exports.
 
 var BoardSize = 11;
 
-var gameState;
-
 function initBoard() {
     return [
     [PX, PX, PX, PE, PE, PE, PE, PE, PX, PX, PX], [PX, PX, PX, PX, PX, PE, PX, PX, PX, PX, PX], [PX, PX, PX, PX, PX, PX, PX, PX, PX, PX, PX], [PE, PX, PX, PX, PX, PD, PX, PX, PX, PX, PE], [PE, PX, PX, PX, PD, PD, PD, PX, PX, PX, PE], [PE, PE, PX, PD, PD, PK, PD, PD, PX, PE, PE], [PE, PX, PX, PX, PD, PD, PD, PX, PX, PX, PE], [PE, PX, PX, PX, PX, PD, PX, PX, PX, PX, PE], [PX, PX, PX, PX, PX, PX, PX, PX, PX, PX, PX], [PX, PX, PX, PX, PX, PE, PX, PX, PX, PX, PX], [PX, PX, PX, PE, PE, PE, PE, PE, PX, PX, PX]];
 }
 
 exports.reset = function () {
-    gameState = {
+    exports.gameState = {
         "board": initBoard(),
             "turn": exports.TeamRed,
             "selectedPiece": {
@@ -67,7 +65,7 @@ function updateUI() {
         var cell = $(this);
         var x = cell.data('x');
         var y = cell.data('y');
-        var cellData = gameState.board[y][x];
+        var cellData = exports.gameState.board[y][x];
         cell.addClass(PieceClasses[cellData]);
 
         if (isKingOnly(x, y)) {
@@ -75,9 +73,9 @@ function updateUI() {
         }
 
         //if there is a selected piece, draw it highlighted
-        if (gameState.selectedPiece.x == x && gameState.selectedPiece.y == y) {
+        if (exports.gameState.selectedPiece.x == x && exports.gameState.selectedPiece.y == y) {
             cell.addClass("special").addClass("selected");
-        } else if (isLegalMove(gameState, x, y)) {
+        } else if (isLegalMove(exports.gameState, x, y)) {
             cell.addClass("special").addClass("move");
         }
     });
@@ -100,7 +98,7 @@ function isValid(x, y) {
 
 function isEmpty(x, y) {
     if (isValid(x, y)) {
-        return gameState.board[y][x] == PX;
+        return exports.gameState.board[y][x] == PX;
     }
     return false;
 }
@@ -165,25 +163,25 @@ function isLegalMove(gameState, x, y) {
 
 exports.makeMove = function (player, selectedX, selectedY, x, y) {
     //if it's not this player's turn, return false
-    if (player != gameState.turn) {
+    if (player != exports.gameState.turn) {
         return false;
     }
 
-    gameState.selectedPiece.x = selectedX;
-    gameState.selectedPiece.y = selectedY;
+    exports.gameState.selectedPiece.x = selectedX;
+    exports.gameState.selectedPiece.y = selectedY;
 
-    if (isLegalMove(gameState, x, y)) {
+    if (isLegalMove(exports.gameState, x, y)) {
         //swap selectedx, selectedy with x, y
-        var temp = gameState.board[y][x];
-        gameState.board[y][x] = gameState.board[selectedY][selectedX];
-        gameState.board[selectedY][selectedX] = temp;
-        gameState.selectedPiece = {
+        var temp = exports.gameState.board[y][x];
+        exports.gameState.board[y][x] = exports.gameState.board[selectedY][selectedX];
+        exports.gameState.board[selectedY][selectedX] = temp;
+        exports.gameState.selectedPiece = {
             "x": -1,
                 "y": -1
         };
 
         //try to capture pieces in 4 directions
-        var capturingPiece = gameState.board[y][x];
+        var capturingPiece = exports.gameState.board[y][x];
         for (var i = -1; i < 2; i += 1) {
             for (var j = -1; j < 2; j += 1) {
                 if ((j !== 0 && i !== 0) || (j === 0 && i === 0)) {
@@ -191,13 +189,13 @@ exports.makeMove = function (player, selectedX, selectedY, x, y) {
                 }
                 //for x+i, y+j, check to see if it's an enemy
                 if (isOccupied(x + i, y + j)) {
-                    var capturedPiece = gameState.board[y + j][x + i];
-                    if (PieceTeams[capturedPiece] != gameState.turn) {
+                    var capturedPiece = exports.gameState.board[y + j][x + i];
+                    if (PieceTeams[capturedPiece] != exports.gameState.turn) {
                         //if they're a defender/enemy, need 1 flank or castle
                         if (capturedPiece == PD || capturedPiece == PE) {
                             if (isOccupied(x + i * 2, y + j * 2)) {
-                                if (PieceTeams[gameState.board[y + j * 2][x + i * 2]] == gameState.turn) {
-                                    gameState.board[y + j][x + i] = PX;
+                                if (PieceTeams[exports.gameState.board[y + j * 2][x + i * 2]] == exports.gameState.turn) {
+                                    exports.gameState.board[y + j][x + i] = PX;
                                 }
                             } else if (isKingOnly(x + i * 2, y + j * 2)) {
 
@@ -210,10 +208,10 @@ exports.makeMove = function (player, selectedX, selectedY, x, y) {
             }
         }
 
-        if (gameState.turn == exports.TeamRed) {
-            gameState.turn = exports.TeamGreen;
+        if (exports.gameState.turn == exports.TeamRed) {
+            exports.gameState.turn = exports.TeamGreen;
         } else {
-            gameState.turn = exports.TeamRed;
+            exports.gameState.turn = exports.TeamRed;
         }
         return true;
     } else {
