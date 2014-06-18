@@ -10,21 +10,32 @@ stylesheet = fs.readFileSync 'style.css'
 keyCounter = 1
 players = {}
 
+outputState = (res, player) ->
+	if logic.gameState
+		console.log players
+		res.writeHead(200, {'Content-Type': 'text/plain'})
+		logic.gameState['yourTurn'] = logic.gameState.turn == player
+		res.end JSON.stringify logic.gameState
+	else
+		res.writeHead(500, {'Content-Type': 'text/plain'})
+		res.end 'no game in progress'
+
+
 doCommand = (command, opts) ->
 	res = opts.response
+	player = players[opts.token]
+	console.log "player #{player}"
 	if command == 'reset'
 		logic.reset()
 		res.writeHead(200, {'Content-Type': 'text/plain'})
 		res.end "user \"#{opts.token}\" reset the game"
+	else if command == 'move'
+		args = opts.data[0].split(",")
+		args.unshift(player)
+		console.log logic.makeMove.apply(args)
+		outputState opts.response, player
 	else if command == 'info'
-		if logic.gameState
-			console.log players
-			res.writeHead(200, {'Content-Type': 'text/plain'})
-			logic.gameState['yourTurn'] = logic.gameState.turn == players[opts.token]
-			res.end JSON.stringify logic.gameState
-		else
-			res.writeHead(500, {'Content-Type': 'text/plain'})
-			res.end 'no game in progress'
+		outputState opts.response, player
 	else
 		res.writeHead(404, {'Content-Type': 'text/plain'})
 		res.end 'unrecognized command'
@@ -52,6 +63,7 @@ http.createServer((req, res) ->
 			if keyCounter <= 2
 				if keyCounter == 1
 					players[key] = logic.TeamRed
+					logic.reset()
 				else
 					players[key] = logic.TeamGreen
 				res.writeHead(200, {'Content-Type': 'text/plain'})
