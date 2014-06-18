@@ -4,6 +4,7 @@ logic = require './logic'
 
 index = fs.readFileSync 'index.html'
 frontend = fs.readFileSync 'frontend.js'
+logicFile = fs.readFileSync 'logic.js'
 stylesheet = fs.readFileSync 'style.css'
 
 doCommand = (command, opts) ->
@@ -11,7 +12,7 @@ doCommand = (command, opts) ->
 	if command == 'reset'
 		logic.reset()
 		res.writeHead(200, {'Content-Type': 'text/plain'})
-		res.end "user \"#{opts.user}\" reset the game"
+		res.end "user \"#{opts.token}\" reset the game"
 	else if command == 'info'
 		
 	else
@@ -36,8 +37,8 @@ http.createServer((req, res) ->
 		else if part1 == 'style.css'
 			res.writeHead(200, {'Content-Type': 'text/plain'})
 			res.end stylesheet
-		else if parts[0]
-			doCommand parts[0], {'request': req, 'user': part1, 'response': res, 'data': parts[1..]}
+		else if part1 == 'api' and parts[0] and parts[1]
+			doCommand parts[1], {'request': req, 'token': parts[0], 'response': res, 'data': parts[2..]}
 		else
 			res.writeHead(400, {'Content-Type': 'text/plain'})
 			res.end 'invalid request'
