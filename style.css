@@ -1,0 +1,47 @@
+body {
+    background-color: black;
+}
+.board-cell {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    margin-right: 2px;
+    margin-bottom: 2px;
+    position: relative;
+}
+.board-row {
+    line-height: 0px;
+}
+.unit-empty {
+    background: blue;
+}
+.unit-enemy {
+    background: red;
+}
+.unit-defender {
+    background: green;
+}
+.unit-king {
+    background: gold;
+}
+.unit-empty.unit-throne {
+    background: orange
+}
+.special:before {
+    display: block;
+    content:'';
+    position: relative;
+    top: -2px;
+    left: -2px;
+    width: 100%;
+    height: 100%;
+    border: 2px solid;
+}
+.selected:before {
+    border-color: white;
+    z-index: 2;
+}
+.move:before {
+    border-color: lightblue;
+    z-index: 1;
+}
