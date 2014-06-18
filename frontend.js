@@ -52,8 +52,8 @@ function queryServer() {
 		if(gameState.yourTurn) {
 			
 		} else {
-			//if it's not our turn, queryServer after 1000 ms	
-			setTimeout(queryServer, 1000);
+			//if it's not our turn, queryServer after 200 ms	
+			setTimeout(queryServer, 200);
 		}
 	});
 }
