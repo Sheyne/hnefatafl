@@ -61,8 +61,11 @@ function queryServer() {
 $(document).ready(function(){
 	//hit key, grab a key!
 	$.getJSON("key", function(data){
-		console.log("GRABBED KEY: "+data);
+		console.log("GRABBED KEY: ", data);
 		key = data;
+		if(key.error) {
+			key = null;
+		}
 		queryServer();
 	});
 
