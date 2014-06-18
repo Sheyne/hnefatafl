@@ -1,3 +1,5 @@
+key = null;
+
 initUI = function () {
     exports.reset();
 
@@ -43,28 +45,58 @@ function updateUI() {
     //highlight enemy pieces that may be flanked by this piece?
 }
 
+function queryServer() {
+	$.getJSON("/api/"+key+"/info", function(gameState) {
+		exports.gameState = gameState;
+		updateUI();
+		if(gameState.yourTurn) {
+			
+		} else {
+			//if it's not our turn, queryServer after 1000 ms	
+			setTimeout(queryServer, 1000);
+		}
+	});
+}
 
 $(document).ready(function(){
+	//hit key, grab a key!
+	$.getJSON("key", function(data){
+		console.log("GRABBED KEY: "+data);
+		key = data;
+		queryServer();
+	});
+
 	initUI();
+
 	updateUI();
 	
 	boardElement.on('click', '.board-cell', function () {
 	    var cell = $(this);
 	    var x = cell.data('x');
 	    var y = cell.data('y');
-	    if (!exports.makeMove(gameState.turn, gameState.selectedPiece.x, gameState.selectedPiece.y, x, y)) {
-	        var piece = gameState.board[y][x];
-	        if (PieceTeams[piece] == gameState.turn && (x != gameState.selectedPiece.x || y != gameState.selectedPiece.y)) {
-	            gameState.selectedPiece = {
+	    var selectedX = exports.gameState.selectedPiece.x;
+	    var selectedY = exports.gameState.selectedPiece.y;
+	    if (!exports.makeMove(exports.gameState.turn, selectedX, selectedY, x, y)) {
+	        var piece = exports.gameState.board[y][x];
+	        if (PieceTeams[piece] == exports.gameState.turn && (x != exports.gameState.selectedPiece.x || y != exports.gameState.selectedPiece.y)) {
+	            exports.gameState.selectedPiece = {
 	                "x": x,
 	                    "y": y
 	            };
 	        } else {
-	            gameState.selectedPiece = {
+	            exports.gameState.selectedPiece = {
 	                "x": -1,
 	                    "y": -1
 	            };
 	        }
+	    } else {
+		//send your move, and then queryServer
+		queryString = "/api/"+key+"/move/"+selectedX+","+selectedY+","+x+","+y;
+		console.log(queryString);
+		$.getJSON(queryString, function(data) {
+			queryServer();
+			updateUI();
+		});
 	    }
 	    updateUI();
 	});

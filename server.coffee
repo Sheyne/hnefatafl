@@ -30,6 +30,7 @@ doCommand = (command, opts) ->
 	else if command == 'move'
 		args = (parseInt(x) for x in opts.data[0].split(","))
 		outputState opts.response, player
+		logic.makeMove(player, args[0], args[1], args[2], args[3])
 	else if command == 'info'
 		outputState opts.response, player
 	else

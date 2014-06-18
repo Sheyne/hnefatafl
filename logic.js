@@ -115,7 +115,9 @@ function isLegalMove(gameState, x, y) {
         currentY += deltaY;
 
         currentPiece = gameState.board[currentY][currentX];
-        if (PieceTeams[currentPiece] != exports.TeamNone || (isKingOnly(currentX, currentY) && selectedPiece != PK)) return false;
+        if (PieceTeams[currentPiece] != exports.TeamNone || (isKingOnly(currentX, currentY) && selectedPiece != PK)) {
+		return false;
+	}
     }
 
     return true;
@@ -127,15 +129,17 @@ function gameIsDraw(gameState) {
 		for(var j=0;j<BoardSize;j++) {
 			//if the piece at gameState.board[j][i] is not on the team equal to gameState.team
 			var currentPiece = gameState.board[j][i];
-			if(PieceTeams[currentPiece] != gameState.team) {
+			if(PieceTeams[currentPiece] != gameState.turn) {
 				continue;
 			}
 			//the piece is on this player's team
 			//try 0 to BoardSize-1, y and x, 0 to BoardSize-1
-			gameState.selected.x = i;
-			gameState.selected.y = j;
+			gameState.selectedPiece.x = i;
+			gameState.selectedPiece.y = j;
 			for(var k=0;k<BoardSize;k++) {
 				if(isLegalMove(gameState, i, k) || isLegalMove(gameState, k, j)) {
+					gameState.selectedPiece.x = -1;
+					gameState.selectedPiece.y = -1;
 					return false;
 				}
 			}
@@ -224,7 +228,6 @@ exports.makeMove = function (player, selectedX, selectedY, x, y) {
         return true;
     } else {
         return false;
-
     }
 
 };
