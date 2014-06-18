@@ -127,7 +127,7 @@ function gameIsDraw(gameState) {
 		for(var j=0;j<BoardSize;j++) {
 			//if the piece at gameState.board[j][i] is not on the team equal to gameState.team
 			var currentPiece = gameState.board[j][i];
-			if(PieceTeams[currentPiece] != gameState.team)) {
+			if(PieceTeams[currentPiece] != gameState.team) {
 				continue;
 			}
 			//the piece is on this player's team
@@ -147,7 +147,7 @@ function gameIsDraw(gameState) {
 
 exports.makeMove = function (player, selectedX, selectedY, x, y) {
     //if it's not this player's turn, return false
-    if (player != exports.gameState.turn) {
+    if (player != exports.gameState.turn || player == exports.TeamNone) {
         return false;
     }
 
