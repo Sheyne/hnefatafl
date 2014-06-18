@@ -31,8 +31,7 @@ doCommand = (command, opts) ->
 		res.end "user \"#{opts.token}\" reset the game"
 	else if command == 'move'
 		args = opts.data[0].split(",")
-		args.unshift(player)
-		console.log logic.makeMove.apply(args)
+		console.log logic.makeMove.apply(player,args[0],args[1],args[2],args[3])
 		outputState opts.response, player
 	else if command == 'info'
 		outputState opts.response, player
