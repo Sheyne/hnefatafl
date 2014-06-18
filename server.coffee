@@ -27,10 +27,10 @@ http.createServer((req, res) ->
 		parts = req.url.split('/')
 		part1 = parts[1]
 		parts = parts[2..]
-		if part1 == '/frontend.js'
+		if part1 == 'frontend.js'
 			res.writeHead(200, {'Content-Type': 'text/plain'})
 			res.end frontend
-		else if part1 == '/logic.js'
+		else if part1 == 'logic.js'
 			res.writeHead(200, {'Content-Type': 'text/plain'})
 			res.end logicFile
 		else if parts[0]

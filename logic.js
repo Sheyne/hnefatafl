@@ -1,6 +1,6 @@
-if (window) {
-    window.logic = {};
-    window.exports = window.logic;
+if (typeof exports === 'undefined') {
+    logic = {};
+    exports = logic;
 }
 
 //attackers move first
