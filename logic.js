@@ -31,11 +31,12 @@ function initBoard() {
 exports.reset = function () {
     exports.gameState = {
         "board": initBoard(),
-            "turn": exports.TeamRed,
-            "selectedPiece": {
+        "turn": exports.TeamRed,
+        "selectedPiece": {
             "x": -1,
-                "y": -1
-        }
+            "y": -1
+        },
+	"winner": -1
     };
 };
 
@@ -81,6 +82,9 @@ function isKingOnly(x, y) {
 }
 
 function isLegalMove(gameState, x, y) {
+    if(gameState.team == exports.TeamNone) {
+	return false;
+    }
     var currentTurn = gameState.turn;
     var selectedX = gameState.selectedPiece.x;
     var selectedY = gameState.selectedPiece.y;
@@ -117,6 +121,30 @@ function isLegalMove(gameState, x, y) {
     return true;
 }
 
+function gameIsDraw(gameState) {
+	//if the current player has no moves, it's a draw
+	for(var i=0;i<BoardSize;i++) {
+		for(var j=0;j<BoardSize;j++) {
+			//if the piece at gameState.board[j][i] is not on the team equal to gameState.team
+			var currentPiece = gameState.board[j][i];
+			if(PieceTeams[currentPiece] != gameState.team)) {
+				continue;
+			}
+			//the piece is on this player's team
+			//try 0 to BoardSize-1, y and x, 0 to BoardSize-1
+			gameState.selected.x = i;
+			gameState.selected.y = j;
+			for(var k=0;k<BoardSize;k++) {
+				if(isLegalMove(gameState, i, k) || isLegalMove(gameState, k, j)) {
+					return false;
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
 exports.makeMove = function (player, selectedX, selectedY, x, y) {
     //if it's not this player's turn, return false
     if (player != exports.gameState.turn) {
@@ -133,8 +161,18 @@ exports.makeMove = function (player, selectedX, selectedY, x, y) {
         exports.gameState.board[selectedY][selectedX] = temp;
         exports.gameState.selectedPiece = {
             "x": -1,
-                "y": -1
+            "y": -1
         };
+
+	if(exports.gameState.board[y][x] == PK) {
+		if(x == 0 || x == BoardSize-1) {
+			if(y == 0 || y == BoardSize-1) {
+				exports.gameState.turn = exports.TeamNone;
+				exports.gameState.winner = exports.TeamGreen;
+				return true;
+			}
+		}
+	}
 
         //try to capture pieces in 4 directions
         var capturingPiece = exports.gameState.board[y][x];
@@ -155,11 +193,18 @@ exports.makeMove = function (player, selectedX, selectedY, x, y) {
                         } else if (capturedPiece == PK) {
                             //need 4 flanks
 			    
+			    var canEscape = NO;
 			    for(var v = -1; v < 2; v+= 1) {
 				for(var w = -1; w < 2; w += 1) {
 				    var possibleEscape = exports.gameState.board[y + j + w][x + i + v];
-				    
+				    if(isEmpty(x + i + v, y + j + w) && !isKingOnly(x + i + v, y + j + w)) {
+					canEscape = YES;
+				    }
 				}
+			    }
+			    if(!canEscape) {
+				exports.gameState.turn = exports.TeamNone;
+				exports.gameState.winner = exports.TeamRed;
 			    }
                         }
                     }
@@ -172,6 +217,10 @@ exports.makeMove = function (player, selectedX, selectedY, x, y) {
         } else {
             exports.gameState.turn = exports.TeamRed;
         }
+	if(gameIsDraw(exports.gameState)) {
+		exports.gameState.turn = exports.TeamNone;
+		exports.gameState.winner = exports.TeamNone;
+	}
         return true;
     } else {
         return false;
