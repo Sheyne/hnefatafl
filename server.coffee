@@ -66,11 +66,11 @@ http.createServer((req, res) ->
 				else
 					players[key] = logic.TeamGreen
 				res.writeHead(200, {'Content-Type': 'text/plain'})
-				res.end key
+				res.end JSON.stringify key
 				keyCounter += 1
 			else
 				res.writeHead(500, {'Content-Type': 'text/plain'})
-				res.end 'the game is full'
+				res.end JSON.stringify {'error': 'the game is full'}
 
 		else if part1 == 'api' and parts[0] and parts[1]
 			doCommand parts[1], {'request': req, 'token': parts[0], 'response': res, 'data': parts[2..]}
