@@ -191,7 +191,7 @@ exports.makeMove = function (player, selectedX, selectedY, x, y) {
                     if (PieceTeams[capturedPiece] != exports.gameState.turn) {
                         //if they're a defender/enemy, need 1 flank or castle
                         if (capturedPiece == PD || capturedPiece == PE) {
-                            if ((isOccupied(x + i * 2, y + j * 2) && PieceTeams[exports.gameState.board[y + j * 2][x + i * 2]] == exports.gameState.turn) || isKingOnly(x + i * 2, y + j * 2)) {
+                            if ((isOccupied(x + i * 2, y + j * 2) && PieceTeams[exports.gameState.board[y + j * 2][x + i * 2]] == exports.gameState.turn) || (isEmpty(x + i * 2, y + j * 2) && isKingOnly(x + i * 2, y + j * 2))) {
                                 exports.gameState.board[y + j][x + i] = PX;
                             }
                         } else if (capturedPiece == PK) {
