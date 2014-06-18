@@ -200,7 +200,8 @@ exports.makeMove = function (player, selectedX, selectedY, x, y) {
 			    var canEscape = false;
 			    for(var v = -1; v < 2; v+= 1) {
 				for(var w = -1; w < 2; w += 1) {
-				    var possibleEscape = exports.gameState.board[y + j + w][x + i + v];
+				    
+				    //var possibleEscape = exports.gameState.board[y + j + w][x + i + v];
 				    if(isEmpty(x + i + v, y + j + w) && !isKingOnly(x + i + v, y + j + w)) {
 					canEscape = true;
 				    }
