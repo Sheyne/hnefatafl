@@ -1,7 +1,7 @@
 key = null;
 
 initUI = function () {
-    exports.reset();
+    logic.reset();
 
     boardElement = $('<div class="board"></div>');
     for (var i = 0; i < BoardSize; i++) {
@@ -30,7 +30,7 @@ function updateUI() {
         var cell = $(this);
         var x = cell.data('x');
         var y = cell.data('y');
-        var cellData = exports.gameState.board[y][x];
+        var cellData = logic.gameState.board[y][x];
         cell.addClass(PieceClasses[cellData]);
 
         if (isKingOnly(x, y)) {
@@ -38,26 +38,26 @@ function updateUI() {
         }
 
         //if there is a selected piece, draw it highlighted
-        if (exports.gameState.selectedPiece.x == x && exports.gameState.selectedPiece.y == y) {
+        if (logic.gameState.selectedPiece.x == x && logic.gameState.selectedPiece.y == y) {
             cell.addClass("special").addClass("selected");
-        } else if (isLegalMove(exports.gameState, x, y)) {
+        } else if (isLegalMove(logic.gameState, x, y)) {
             cell.addClass("special").addClass("move");
         }
-	if(exports.gameState.previousPiece.x == x && exports.gameState.previousPiece.y == y) {
+	if(logic.gameState.previousPiece.x == x && logic.gameState.previousPiece.y == y) {
 	    cell.addClass("previous").addClass("special");
 	}
     });
 
-    if(exports.gameState.turn == -1) {
+    if(logic.gameState.turn == -1) {
 	var winner;
-	switch(exports.gameState.winner) {
-		case exports.TeamNone:
+	switch(logic.gameState.winner) {
+		case logic.TeamNone:
 			winner = "Tie";
 			break;
-		case exports.TeamRed:
+		case logic.TeamRed:
 			winner = "Red";
 			break;
-		case exports.TeamGreen:
+		case logic.TeamGreen:
 			winner = "Green";
 			break;
 	}
@@ -66,7 +66,7 @@ function updateUI() {
 	resetButton.show();
     } else {
 	gameOverText.text("");
-	turnText.text((exports.gameState.turn == exports.TeamRed ? "Red" : "Green")+"'s Turn");
+	turnText.text((logic.gameState.turn == logic.TeamRed ? "Red" : "Green")+"'s Turn");
 	resetButton.hide();
     }
 
@@ -78,7 +78,7 @@ function updateUI() {
 
 function queryServer() {
 	$.getJSON("/api/"+key+"/info", function(gameState) {
-		exports.gameState = gameState;
+		logic.gameState = gameState;
 		updateUI();
 		if(gameState.yourTurn) {
 			
@@ -105,23 +105,23 @@ $(document).ready(function(){
 	updateUI();
 	
 	boardElement.on('click', '.board-cell', function () {
-	    if(!exports.gameState.yourTurn) {
+	    if(!logic.gameState.yourTurn) {
 		return;
 	    }
 	    var cell = $(this);
 	    var x = cell.data('x');
 	    var y = cell.data('y');
-	    var selectedX = exports.gameState.selectedPiece.x;
-	    var selectedY = exports.gameState.selectedPiece.y;
-	    if (!exports.makeMove(exports.gameState.turn, selectedX, selectedY, x, y)) {
-	        var piece = exports.gameState.board[y][x];
-	        if (PieceTeams[piece] == exports.gameState.turn && (x != exports.gameState.selectedPiece.x || y != exports.gameState.selectedPiece.y)) {
-	            exports.gameState.selectedPiece = {
+	    var selectedX = logic.gameState.selectedPiece.x;
+	    var selectedY = logic.gameState.selectedPiece.y;
+	    if (!logic.makeMove(logic.gameState.turn, selectedX, selectedY, x, y)) {
+	        var piece = logic.gameState.board[y][x];
+	        if (PieceTeams[piece] == logic.gameState.turn && (x != logic.gameState.selectedPiece.x || y != logic.gameState.selectedPiece.y)) {
+	            logic.gameState.selectedPiece = {
 	                "x": x,
 	                    "y": y
 	            };
 	        } else {
-	            exports.gameState.selectedPiece = {
+	            logic.gameState.selectedPiece = {
 	                "x": -1,
 	                    "y": -1
 	            };
