@@ -56,7 +56,7 @@ http.createServer((req, res) ->
 			res.writeHead(200, {'Content-Type': 'text/plain'})
 			res.end stylesheet
 		else if part1 == 'key'
-			key = "key#{keyCounter}"
+			key = "key#{Math.round(Math.random()*10000)}"
 			if keyCounter <= 2
 				if keyCounter == 1
 					players[key] = logic.TeamRed
