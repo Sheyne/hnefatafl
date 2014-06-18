@@ -1,47 +1,59 @@
 body {
     background-color: black;
+    color: white;
 }
 .board-cell {
     width: 20px;
     height: 20px;
     display: inline-block;
-    margin-right: 2px;
-    margin-bottom: 2px;
     position: relative;
+	border: 10px solid;
+	margin: 0px 2px 2px 0px;
+	-webkit-border-radius: 7px;
+	-moz-border-radius: 7px;
+	border-radius: 7px;
 }
 .board-row {
     line-height: 0px;
 }
+.special {
+    border-color: white;
+}
 .unit-empty {
-    background: blue;
+    background: #abe;
+    border-color: #abe;
+	-webkit-border-radius: 7px;
+	-moz-border-radius: 7px;
+	border-radius: 7px;
+}
+.unit-empty.special {
+    border-color: #67a;
 }
 .unit-enemy {
-    background: red;
+    background: #f04;
+    border-color: #f04;
+}
+.unit-enemy.special {
+    border-color: #a01;
 }
 .unit-defender {
-    background: green;
+    background: #0f4;
+    border-color: #0f4;
+}
+.unit-defender.special {
+    border-color: #0a1;
 }
 .unit-king {
     background: gold;
+    border-color: gold;
+}
+.special {
+    border-color: white;
 }
 .unit-empty.unit-throne {
-    background: orange
+    background: #237;
+    border-color: #237;
 }
-.special:before {
-    display: block;
-    content:'';
-    position: relative;
-    top: -2px;
-    left: -2px;
-    width: 100%;
-    height: 100%;
-    border: 2px solid;
-}
-.selected:before {
-    border-color: white;
-    z-index: 2;
-}
-.move:before {
+.move {
     border-color: lightblue;
-    z-index: 1;
 }
