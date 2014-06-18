@@ -41,50 +41,6 @@ exports.reset = function () {
 
 var boardElement;
 
-initUI = function () {
-    exports.reset();
-
-    boardElement = $('<div class="board"></div>');
-    for (var i = 0; i < BoardSize; i++) {
-        var boardRow = $('<div class="board-row"></div>');
-        for (var j = 0; j < BoardSize; j++) {
-            var cell = $('<div class="board-cell"></div>');
-            cell.data('x', j);
-            cell.data('y', i);
-            boardRow.append(cell);
-        }
-        boardElement.append(boardRow);
-    }
-
-    $('body').append(boardElement);
-}
-
-function updateUI() {
-    //draw each piece where it is
-    $('.board-cell').attr('class', 'board-cell').each(function () {
-        var cell = $(this);
-        var x = cell.data('x');
-        var y = cell.data('y');
-        var cellData = exports.gameState.board[y][x];
-        cell.addClass(PieceClasses[cellData]);
-
-        if (isKingOnly(x, y)) {
-            cell.addClass("unit-throne");
-        }
-
-        //if there is a selected piece, draw it highlighted
-        if (exports.gameState.selectedPiece.x == x && exports.gameState.selectedPiece.y == y) {
-            cell.addClass("special").addClass("selected");
-        } else if (isLegalMove(exports.gameState, x, y)) {
-            cell.addClass("special").addClass("move");
-        }
-    });
-
-    //also highlight its possible moves
-    //highlight enemy pieces that are flanked on one side
-    //highlight the king if he is an enemy and is flanked at all?
-    //highlight enemy pieces that may be flanked by this piece?
-}
 
 //board analysis
 
@@ -193,15 +149,18 @@ exports.makeMove = function (player, selectedX, selectedY, x, y) {
                     if (PieceTeams[capturedPiece] != exports.gameState.turn) {
                         //if they're a defender/enemy, need 1 flank or castle
                         if (capturedPiece == PD || capturedPiece == PE) {
-                            if (isOccupied(x + i * 2, y + j * 2)) {
-                                if (PieceTeams[exports.gameState.board[y + j * 2][x + i * 2]] == exports.gameState.turn) {
-                                    exports.gameState.board[y + j][x + i] = PX;
-                                }
-                            } else if (isKingOnly(x + i * 2, y + j * 2)) {
-
+                            if ((isOccupied(x + i * 2, y + j * 2) && PieceTeams[exports.gameState.board[y + j * 2][x + i * 2]] == exports.gameState.turn) || isKingOnly(x + i * 2, y + j * 2)) {
+                                exports.gameState.board[y + j][x + i] = PX;
                             }
                         } else if (capturedPiece == PK) {
                             //need 4 flanks
+			    
+			    for(var v = -1; v < 2; v+= 1) {
+				for(var w = -1; w < 2; w += 1) {
+				    var possibleEscape = exports.gameState.board[y + j + w][x + i + v];
+				    
+				}
+			    }
                         }
                     }
                 }
