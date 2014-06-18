@@ -46,13 +46,13 @@ function updateUI() {
     if(exports.gameState.turn == -1) {
 	var winner;
 	switch(exports.gameState.winner) {
-		case -1:
+		case exports.TeamNone:
 			winner = "Tie";
 			break;
-		case 0:
+		case exports.TeamRed:
 			winner = "Red";
 			break;
-		case 1:
+		case exports.TeamGreen:
 			winner = "Green";
 			break;
 	}
@@ -60,7 +60,7 @@ function updateUI() {
         turnText.text("Game Over");
     } else {
 	gameOverText.text("");
-	turnText.text((exports.gameState.turn == 0 ? "Red" : "Green")+"'s Turn");
+	turnText.text((exports.gameState.turn == exports.TeamRed ? "Red" : "Green")+"'s Turn");
     }
 
     //also highlight its possible moves
@@ -98,6 +98,9 @@ $(document).ready(function(){
 	updateUI();
 	
 	boardElement.on('click', '.board-cell', function () {
+	    if(!exports.gameState.yourTurn) {
+		return;
+	    }
 	    var cell = $(this);
 	    var x = cell.data('x');
 	    var y = cell.data('y');
