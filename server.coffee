@@ -12,7 +12,6 @@ players = {}
 
 outputState = (res, player) ->
 	if logic.gameState
-		console.log players
 		res.writeHead(200, {'Content-Type': 'text/plain'})
 		logic.gameState['yourTurn'] = logic.gameState.turn == player
 		res.end JSON.stringify logic.gameState
@@ -24,14 +23,12 @@ outputState = (res, player) ->
 doCommand = (command, opts) ->
 	res = opts.response
 	player = players[opts.token]
-	console.log "player #{player}"
 	if command == 'reset'
 		logic.reset()
 		res.writeHead(200, {'Content-Type': 'text/plain'})
 		res.end "user \"#{opts.token}\" reset the game"
 	else if command == 'move'
 		args = (parseInt(x) for x in opts.data[0].split(","))
-		console.log logic.makeMove(player,args[0],args[1],args[2],args[3])
 		outputState opts.response, player
 	else if command == 'info'
 		outputState opts.response, player
