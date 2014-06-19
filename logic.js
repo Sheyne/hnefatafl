@@ -204,6 +204,7 @@ exports.makeMove = function (player, selectedX, selectedY, x, y) {
                             //need 4 flanks
 			    console.log("capped piece is a king");
 			    var canEscape = false;
+			    var allies = 0;
 			    for(var v = -1; v < 2; v+= 1) {
 				for(var w = -1; w < 2; w += 1) {
 				    if((v !== 0 && w !== 0) || (v === 0 && w === 0)) {
@@ -213,6 +214,25 @@ exports.makeMove = function (player, selectedX, selectedY, x, y) {
 				    if(isEmpty(x + i + v, y + j + w) && !isKingOnly(x + i + v, y + j + w)) {
 					console.log("found an escape route at", x+i+v, ",", y+j+w);
 					canEscape = true;
+				    } else if(exports.gameState.board[y + j + w][x + i + v] == PD) {
+					allies += 1;
+					if(allies == 2) {
+						canEscape = true;
+					} else {
+						//make sure this ally isn't surrounded by enemies
+						for(var a = -1; a < 2; a += 1) {
+							for(var b = -1; b < 2; b += 1) {
+								if((a !== 0 && b !== 0) || (a === 0 && b === 0)) {
+									continue;
+								}
+								optionX = x + i + v + a;
+								optionY = y + j + w + b;
+								if(isValid(optionX, optionY) && exports.gameState.board[optionY][optionX] != PK && !isKingOnly(optionX, optionY) && exports.gameState.board[optionY][optionX] != PE) {
+									canEscape = true;
+								}
+							}
+						}
+					}
 				    }
 				}
 			    }
